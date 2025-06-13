@@ -7,7 +7,9 @@ from markdown import Markdown
 from io import StringIO
 import os, shutil, sys
 
+print(f"sys.argv: {sys.argv}")
 basepath = sys.argv[1] if len(sys.argv) > 1 else "/"
+print(f"Basepath value: '{basepath}'")
 
 def markdown_to_html_node(md):
     blocks = markdown_to_blocks(md)
@@ -106,7 +108,8 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
             generate_pages_recursive(s_item, template_path, d_item)
 
 def main():
-    shutil.rmtree("docs")
+    if os.path.exists("docs"):
+        shutil.rmtree("docs")
     os.makedirs("docs")
     move_to_dir("static", "docs")
     generate_pages_recursive("content", "template.html", "docs")
