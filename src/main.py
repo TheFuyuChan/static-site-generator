@@ -7,9 +7,7 @@ from markdown import Markdown
 from io import StringIO
 import os, shutil, sys
 
-basepath = sys.argv[0]
-if not basepath:
-    basepath = "/"
+basepath = sys.argv[1] if len(sys.argv) > 1 else "/"
 
 def markdown_to_html_node(md):
     blocks = markdown_to_blocks(md)
