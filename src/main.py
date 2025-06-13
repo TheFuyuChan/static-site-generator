@@ -1,10 +1,11 @@
+from email.mime import base
 from unittest import result
 from textnode import *
 from htmlnode import *
 from blocks import *
 from markdown import Markdown
 from io import StringIO
-import os, shutil
+import os, shutil, sys
 
 
 def markdown_to_html_node(md):
@@ -66,6 +67,7 @@ def generate_page(from_path, template_path, dest_path):
     html = markdown_to_html_node(file)
     title = extract_title(file)
     result = template.replace("{{ Title }}", title).replace("{{ Content }}", html.to_html())
+    result = result.replace('href="/', 'href="{basepath}').replace('src="/', 'src="{basepath}')
     dir_name = os.path.dirname(dest_path)
     if dir_name:
         os.makedirs(dir_name, exist_ok=True)
@@ -103,10 +105,13 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
             generate_pages_recursive(s_item, template_path, d_item)
 
 def main():
-    shutil.rmtree("public")
-    os.makedirs("public")
-    move_to_dir("static", "public")
-    generate_pages_recursive("content", "template.html", "public")
+    shutil.rmtree("docs")
+    os.makedirs("docs")
+    move_to_dir("static", "docs")
+    basepath = sys.argv[0]
+    if not basepath:
+        basepath = "/"
+    generate_pages_recursive("content", "template.html", "docs")
 
 
 
